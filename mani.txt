@@ -1,0 +1,740 @@
+
+
+
+bowser and elements:
+
+
+package clear;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+ 
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.support.ui.Select;
+import org.testng.annotations.AfterClass;
+ 
+import org.testng.annotations.BeforeClass;
+ 
+import org.testng.annotations.Parameters;
+ 
+import org.testng.annotations.Test;
+
+
+ 
+public class searchd {
+ 
+ public WebDriver driver;
+ 
+  @Parameters("browser")
+ 
+  @BeforeClass
+ 
+  // Passing Browser parameter from TestNG xml
+ 
+  public void beforeTest(String browser) throws Exception {
+ 
+  // If the browser is Firefox, then do this
+ 
+  if (browser.equalsIgnoreCase("iee")) { 
+ 
+   // Here I am setting up the path for my IEDriver
+ 
+   System.setProperty("webdriver.ie.driver","C:\\Users\\good\\Downloads\\IEDriverServer.exe");
+ 
+   driver = new InternetExplorerDriver();
+ 
+  } 
+  else if(browser.equalsIgnoreCase("chrome")) { 
+	  
+	   // Here I am setting up the path for my IEDriver
+	 
+	   System.setProperty("webdriver.chrome.driver","C:\\Users\\good\\Desktop\\New folder\\chromedriver.exe");
+	 
+	   driver = new ChromeDriver();
+	 
+	  } 
+  else{
+		//If no browser passed throw exception
+		throw new Exception("Browser is not correct");
+	}
+	//driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);//
+  // Doesn't the browser type, lauch the Website
+ 
+ 
+  }
+ 
+  // Once Before method is completed, Test method will start
+ 
+  @Test public void login() throws Exception {
+	  
+	  driver.get("https://www.cleartrip.com/"); 
+	  utility.screenshoting(driver,"strating");                                          //for screenshot
+	  driver.findElement(By.xpath("//*[@id=\"RoundTrip\"]")).click(); 
+	  Thread.sleep(1000);
+	  exceld.setpath();
+	  Thread.sleep(1000);
+	  String from=exceld.setCell(0,0);
+	  Thread.sleep(1000);
+	  String to=exceld.setCell(0,1);
+	  Thread.sleep(1000);
+	  WebElement ac=driver.findElement(By.xpath("//*[@id=\"FromTag\"]"));
+
+	  Thread.sleep(1000);
+	 ac.sendKeys(Keys.DOWN);
+	  Thread.sleep(1000);
+	  ac.sendKeys(from,Keys.ENTER);
+
+	  Thread.sleep(1000);
+
+	  WebElement ab=driver.findElement(By.xpath("//*[@id=\"ToTag\"]"));
+
+	  Thread.sleep(1000);
+	  ac.sendKeys(Keys.DOWN);
+	  Thread.sleep(1000);
+	  ab.sendKeys(to,Keys.ENTER);
+
+	  Thread.sleep(1000);
+
+	  driver.findElement(By.xpath("//*[@id='DepartDate']")).click();
+
+	  driver.findElement(By.xpath("//*[@id='ui-datepicker-div']/div[1]/table/tbody/tr[2]/td[2]/a")).click();
+
+	  Thread.sleep(1500); 
+	  driver.findElement(By.xpath("//*[@id='ReturnDate']")).click();
+	  Thread.sleep(1500);
+	  driver.findElement(By.xpath("//*[@id='ui-datepicker-div']/div[2]/table/tbody/tr[3]/td[2]/a")).click();
+
+	  Thread.sleep(1500);
+
+	  Select sc=new Select (driver.findElement(By.xpath("//*[@id=\"Adults\"]")));
+
+	  sc.selectByIndex(4); 
+
+	  Thread.sleep(1500);
+
+	  driver.findElement(By.xpath("//*[@id=\"SearchBtn\"]")).click();
+
+	  Thread.sleep(1500);
+
+	  }
+
+ 
+  
+ 
+  @AfterClass public void afterTest() {
+ 
+ driver.quit();
+ 
+ }
+ 
+}
+
+
+
+
+excel file:
+
+package clear;
+
+import java.io.FileInputStream;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+
+import org.apache.poi.xssf.usermodel.XSSFRow;
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+public class exceld
+
+{
+
+private static XSSFRow row;
+
+private static XSSFCell cell;
+
+private static XSSFSheet sheet;
+
+private static XSSFWorkbook workbook1;
+
+private static FileInputStream excelfile;
+
+private static String path;
+
+public static void setpath() throws Exception
+
+{
+
+       try
+
+       {
+
+              path="C:\\Users\\good\\Desktop\\rrt.xlsx";
+
+              excelfile =new FileInputStream(path);
+
+              workbook1=new XSSFWorkbook(excelfile);
+
+              sheet=workbook1.getSheet("sheet1");
+
+       }
+
+       catch(Exception e)
+
+       {
+
+              e.printStackTrace();
+
+       }
+
+}
+
+public static String setCell(int row,int column) throws Exception
+
+{
+
+       String cellValue=null;
+
+       try
+
+       {
+
+              XSSFRow row1=sheet.getRow(row);
+
+              XSSFCell c=row1.getCell(column);
+
+              cellValue=c.getStringCellValue();
+
+       }
+
+       catch(Exception e)
+
+       {
+
+              e.printStackTrace();
+
+       }
+
+       return cellValue;
+
+      
+
+}
+
+ 
+
+}
+
+screen shot:
+
+package clear;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.FileHandler;
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+
+
+class utility {
+	
+	public static void screenshoting(WebDriver driver,String shotname)
+	{
+		
+			try {
+				TakesScreenshot sc=(TakesScreenshot)driver;
+				File source=sc.getScreenshotAs(OutputType.FILE);
+				
+				FileUtils.copyFile(source, new File("C:\\Users\\good\\Desktop\\New folder\\clear\\screenshots"+shotname+".png"));
+				System.out.println("screen shot taken");
+			}
+			catch (WebDriverException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
+		
+		
+	}
+
+	
+
+}
+
+
+cross broser xml file:
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Suite" parallel="tests">
+  <test name="iee">
+  <parameter name="browser" value="iee"></parameter>
+    <classes>
+      <class name="clear.searchd"/>
+    </classes>
+  </test> <!-- Test -->
+  
+   <test name="chrome">
+  <parameter name="browser" value="chrome"></parameter>
+    <classes>
+      <class name="clear.searchd"/>
+    </classes>
+  </test> 
+</suite> <!-- Suite -->
+
+
+
+
+
+marshallpeT B:
+
+package Marshallpet;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
+
+
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotInteractableException;
+
+public class MarShall{
+		
+		 public WebDriver driver;
+		 
+		  @Parameters("browser")
+		 
+		  @BeforeClass
+		 
+		  // Passing Browser parameter from TestNG xml
+		 
+		  public void beforeTest(String browser) throws Exception {
+		 
+		  // If the browser is Firefox, then do this
+		 
+		  if (browser.equalsIgnoreCase("iee")) { 
+		 
+		   // Here I am setting up the path for my IEDriver
+		 
+		   System.setProperty("webdriver.ie.driver","C:\\Users\\good\\Downloads\\IEDriverServer.exe");
+		 
+		   driver = new InternetExplorerDriver();
+		   driver.manage().window().maximize();
+		 
+		  } 
+		  else if(browser.equalsIgnoreCase("chrome")) { 
+			  
+			   // Here I am setting up the path for my IEDriver
+			 
+			   System.setProperty("webdriver.chrome.driver","C:\\Users\\good\\Downloads\\bramhini\\chromedriver.exe");
+			 
+			   driver = new ChromeDriver();
+			   driver.manage().window().maximize();
+			  } 
+		  else{
+				//If no browser passed throw exception
+				throw new Exception("Browser is not correct");
+			}
+			//driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);//
+		  // Doesn't the browser type, lauch the Website
+		 
+		 
+		  }
+		 
+		  // Once Before method is completed, Test method will start
+		 
+		  @Test 
+	public  void login() throws Exception,ElementNotInteractableException {
+
+
+	driver.navigate().to("https://www.marshallspetzone.com/");
+
+	Thread.sleep(3000);
+
+	driver.findElement(By.xpath("//*[@id='cbp-hrmenu-tab-14']/a/span")).click();
+
+	Thread.sleep(2000);
+
+	driver.findElement(By.xpath("//*[@id='left-column']/div[1]/div/ul/li[3]/a")).click();
+
+	// driver.findElement(By.xpath("//div[@class='category-top-menu block-content']//ul//li//a[contains(@href,'https://www.marshallspetzone.com/24-food')]")).click();
+
+	Thread.sleep(1000);
+	for(int i=1;i<=2;i++)
+
+	{
+
+	// Products name
+
+	String ProductName1 = driver.findElement(By.xpath("//*[@id='js-product-list']/div/div["+ i +"]/article/div[2]/h3/a")).getText();
+
+	System.out.println("Product " + i + " = " + ProductName1);
+	// select products
+	
+	driver.findElement(By.xpath("//*[@id='js-product-list']/div/div["+ i +"]/article/div[1]/a/img")).click();
+	
+	//Add to cart          
+
+	if (driver.findElement(By.xpath("//*[@id='add-to-cart-or-refresh']/div[2]/div/div[2]/div/button")).isEnabled())
+
+	{
+
+	driver.findElement(By.xpath("//*[@id='add-to-cart-or-refresh']/div[2]/div/div[2]/div/button")).click();
+
+	System.out.println("Proceed to Checkout");
+
+	System.out.println();
+
+	}
+
+	else
+
+	{
+
+	System.out.println("Sorry, Out of Stock");
+
+	System.out.println();
+
+	}
+
+	//Continue Shopping
+
+	driver.findElement(By.xpath("//*[@id='product']")).click(); 
+
+	Thread.sleep(2000);
+
+	//Going to Products page
+
+	driver.navigate().back();
+
+	Thread.sleep(3000);
+
+	}
+
+	//Items in cart with Sub Total
+
+	driver.findElement(By.xpath("//*[@id=\"cart-toogle\"]/i")).click();
+
+	Thread.sleep(3000);
+
+	String subTotal = driver.findElement(By.xpath("//*[@id=\"blockcart-content\"]/div[2]/div/span[2]")).getText();
+
+	System.out.println("Total Amount = "+ subTotal);
+
+
+	}
+	
+
+marshalpetc:
+
+
+public class shall{
+		
+		 public WebDriver driver;
+		 
+		  @Parameters("browser")
+		 
+		  @BeforeClass
+		 
+		  // Passing Browser parameter from TestNG xml
+		 
+		  public void beforeTest(String browser) throws Exception {
+		 
+		  // If the browser is Firefox, then do this
+		 
+		  if (browser.equalsIgnoreCase("iee")) { 
+		 
+		   // Here I am setting up the path for my IEDriver
+		 
+		   System.setProperty("webdriver.ie.driver","C:\\Users\\good\\Downloads\\IEDriverServer.exe");
+		 
+		   driver = new InternetExplorerDriver();
+		   driver.manage().window().maximize();
+		 
+		  } 
+		  else if(browser.equalsIgnoreCase("chrome")) { 
+			  
+			   // Here I am setting up the path for my IEDriver
+			 
+			   System.setProperty("webdriver.chrome.driver","C:\\Users\\good\\Downloads\\bramhini\\chromedriver.exe");
+			 
+			   driver = new ChromeDriver();
+			   driver.manage().window().maximize();
+			  } 
+		  else{
+				//If no browser passed throw exception
+				throw new Exception("Browser is not correct");
+			}
+			//driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);//
+		  // Doesn't the browser type, lauch the Website
+		 
+		 
+		  }
+		 
+		  // Once Before method is completed, Test method will start
+		 
+		  @Test 
+	public  void login() throws Exception,ElementNotInteractableException {
+
+
+	driver.navigate().to("https://www.marshallspetzone.com/");
+
+	Thread.sleep(3000);
+
+	driver.findElement(By.xpath("//*[@id='cbp-hrmenu-tab-13']/a/span")).click();
+
+	Thread.sleep(2000);
+
+	driver.findElement(By.xpath("//*[@id='left-column']/div[1]/div/ul/li[1]/a")).click();
+
+	// driver.findElement(By.xpath("//div[@class='category-top-menu block-content']//ul//li//a[contains(@href,'https://www.marshallspetzone.com/24-food')]")).click();
+
+	Thread.sleep(1000);
+	driver.findElement(By.name("filter Price")).click();
+	Thread.sleep(1000);
+	
+	// Products name
+
+	String ProductName1 = driver.findElement(By.xpath("//*[@id='js-product-list']/div/div[1]/article/div[2]/h3/a")).getText();
+
+	System.out.println("Product " +  " = " + ProductName1);
+	// select products
+	Thread.sleep(1000);
+	String price1=driver.findElement(By.xpath("//*[@id='js-product-list']/div/div[1]/article/div[2]/div[3]/span[1]")).getText();
+	System.out.println("price " + " = " + price1);
+	
+	driver.findElement(By.xpath("//*[@id='cbp-hrmenu-tab-13']/a/span")).click();
+
+Thread.sleep(1000);
+	
+	driver.findElement(By.xpath("//*[@id='left-column']/div[1]/div/ul/li[8]/a")).click();
+	Thread.sleep(1000);
+	driver.findElement(By.name("filter Price")).click();
+	Thread.sleep(1000);
+	
+	
+
+	String ProductName2 = driver.findElement(By.xpath("//*[@id='js-product-list']/div/div/article/div[2]/h3/a")).getText();
+
+	System.out.println("Product "+ " = " + ProductName2);
+	// select products
+	
+	String price3=driver.findElement(By.xpath("//*[@id='js-product-list']/div/div/article/div[2]/div[3]/span[1]")).getText();
+	System.out.println("price " + " = " + price3);
+	//Add to cart          
+	}
+
+	
+		  
+	
+		  
+	@AfterClass
+	public void exit()
+	{
+
+	driver.quit();
+
+}
+}
+
+AxisBbank:
+
+public class Axisb {
+	
+	public WebDriver driver;
+	 
+	  @Parameters("browser")
+	 
+	  @BeforeClass
+
+	  // Passing Browser parameter from TestNG xml
+	 
+	  public void beforeTest(String browser) throws Exception {
+
+	  // If the browser is Firefox, then do this
+	 
+	  if (browser.equalsIgnoreCase("iee")) { 
+	 
+	   // Here I am setting up the path for my IEDriver
+	 
+	   System.setProperty("webdriver.ie.driver","C:\\Users\\good\\Downloads\\IEDriverServer.exe");
+	 
+	   driver = new InternetExplorerDriver();
+	 
+	  } 
+	  else if(browser.equalsIgnoreCase("chrome")) { 
+		  
+		   // Here I am setting up the path for my IEDriver
+		 
+		   System.setProperty("webdriver.chrome.driver","C:\\Users\\good\\Downloads\\bramhini\\chromedriver.exe");
+		 
+		   driver = new ChromeDriver();
+		 
+		  } 
+	  else{
+			//If no browser passed throw exception
+			throw new Exception("Browser is not correct");
+		}
+		//
+	  // Doesn't the browser type, lauch the Website
+	 
+	 
+	  }
+	 
+	  // Once Before method is completed, Test method will start
+
+	 @Test 
+public  void login() throws Exception {
+
+	
+	driver.navigate().to("https://www.axisbank.com/personal/calculators/fd-monthly-investment-calculator");
+
+	Thread.sleep(3000);
+
+	//driver.findElement(By.xpath("//*[@id='aspnetForm']/div[6]/div[6]/div/div[2]/div[1]/div/div[1]/a[1]")).click();
+
+	Thread.sleep(1000);
+	
+	Select sc=new Select (driver.findElement(By.xpath("//*[@id='sbSelector_10768130']")));
+
+	  sc.selectByIndex(2);
+
+	
+
+
+	driver.findElement(By.xpath("//*[@id='ctl00_Body_C002_txtAmount']")).sendKeys("30000");
+
+	String InterestRate = driver.findElement(By.xpath("//*[@id='ctl00_Body_C002_lblDisplayRate']")).getText();
+
+	System.out.println("Interest Rate = " + InterestRate);
+
+	driver.findElement(By.xpath("//*[@id='ctl00_Body_C002_btnCal']")).click();
+
+	Thread.sleep(1000);
+
+	String GrossTotal = driver.findElement(By.xpath("//*[@id='aspnetForm']/div[6]/div[6]/div/div[2]/div[2]/div/div/div[2]/div/div[2]/p[2]/span")).getText();
+
+	System.out.println("Maturity Amount = " + GrossTotal);
+	  }
+	 @AfterClass
+	  public void exitd()
+	  {
+		  
+	driver.quit();
+
+	}
+
+}
+	
+mobiles:
+
+
+public class Mobilest {
+	
+	public WebDriver driver;
+	 
+	  @Parameters("browser")
+	 
+	  @BeforeClass
+
+	  // Passing Browser parameter from TestNG xml
+	 
+	  public void beforeTest(String browser) throws Exception {
+
+	  // If the browser is Firefox, then do this
+	 
+	  if (browser.equalsIgnoreCase("iee")) { 
+	 
+	   // Here I am setting up the path for my IEDriver
+	 
+	   System.setProperty("webdriver.ie.driver","C:\\Users\\good\\Downloads\\IEDriverServer.exe");
+	 
+	   driver = new InternetExplorerDriver();
+	   driver.manage().window().maximize();
+	 
+	  } 
+	  else if(browser.equalsIgnoreCase("chrome")) { 
+		  
+		   // Here I am setting up the path for my IEDriver
+		 
+		   System.setProperty("webdriver.chrome.driver","C:\\Users\\good\\Downloads\\bramhini\\chromedriver.exe");
+		 
+		   driver = new ChromeDriver();
+		   driver.manage().window().maximize();
+		 
+		  } 
+	  else{
+			//If no browser passed throw exception
+			throw new Exception("Browser is not correct");
+		}
+		//
+	  // Doesn't the browser type, lauch the Website
+	 
+	 
+	  }
+	 
+	  // Once Before method is completed, Test method will start
+
+	  @Test
+	  
+	  public void mobile() throws Exception{
+		  
+		  driver.get("https://www.t-mobile.com/");
+		  Thread.sleep(1000);
+		  driver.findElement(By.xpath("/html/body/header/nav/div[2]/div[1]/ul/li[3]/a")).click();
+		  Thread.sleep(1000);
+		  Select cond=new Select(driver.findElement(By.xpath("//*[@id='dropdownMenu1']")));
+		  cond.selectByVisibleText("New");
+		  Thread.sleep(1000);
+		
+		  driver.findElement(By.xpath("//*[@id='filter-and-sort']/div[1]/span/i")).click();
+		  Thread.sleep(1000); String mn=driver.findElement(By.xpath("//*[@id='pdpLabels']/section/div[3]/div[2]/div[1]/browse-tile/div/a")).getText();
+		  System.out.println(mn);
+		  Thread.sleep(1000); String mp=driver.findElement(By.xpath("//*[@id='pdpLabels']/section/div[3]/div[2]/div[1]/browse-tile/div/div[4]/div/div/div[3]/div/money/span/span[3]")).getText();
+		  Thread.sleep(1000);  System.out.println(mp);
+		  Thread.sleep(1000); driver.findElement(By.xpath("//*[@id='anchornav']/li[3]/div/a/span[2]")).click();
+		  Thread.sleep(1000);  Select sort=new Select(driver.findElement(By.xpath("//*[@id='sort']/i")));
+		  Thread.sleep(1000);  sort.selectByIndex(0);
+		  Thread.sleep(1000);  String an=driver.findElement(By.xpath("//*[@id='pdpLabels']/section/div[3]/div[2]/div[1]/browse-tile/div/a")).getText();
+		  System.out.println(an);
+		  Thread.sleep(1000);  String ap=driver.findElement(By.xpath("//*[@id='pdpLabels']/section/div[3]/div[2]/div[1]/browse-tile/div/div[2]/div/div/div[3]/div/money/span/span[3]")).getText();
+		  Thread.sleep(1000);  System.out.println(ap);
+		  Thread.sleep(1000);  driver.findElement(By.xpath("/html/body/div[3]/div/div/universal-menu/header/nav/div[1]/div/a")).click();
+		  
+		  
+		  
+		  
+	  }
+	  @AfterClass
+	  public void Exit(){
+		  driver.quit();
+	  }
+}
+
+
+
+
+	
+	
+	
+
